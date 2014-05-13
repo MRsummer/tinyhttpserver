@@ -1,0 +1,7 @@
+<server>
+    <name>localhost</name>
+    <port>9999</port>
+    <root>/Users/zhuguangwen/Work/android/httpserver/www</root>
+    <accesslog>/Users/zhuguangwen/Work/android/httpserver/www/log/access.log</accesslog>
+    <errorlog>/Users/zhuguangwen/Work/android/httpserver/www/log/error.log</errorlog>
+</server>
