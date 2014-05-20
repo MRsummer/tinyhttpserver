@@ -78,15 +78,10 @@ public final class Http {
 	public static String STATUS_503 = "Unavailable";
 	public static String STATUS_505 = "HTTP Version Not Supported";
 
-	/**
-	 * Returns the <code>String</code> form of the specified statusCode. In
-	 * order to do this, it uses reflection to return the value of one the
-	 * appropriate STATUS_xxx constants.
-	 */
 	public static String getStatusStr(int statusCode) {
 		final String fieldName = "STATUS_" + statusCode;
 		try {
-			final String statusStr = (String) Class.forName("com.httpserver.Http").getField(fieldName).get(null);
+			final String statusStr = (String) Class.forName("com.httpserver.http.Http").getField(fieldName).get(null);
 			return statusStr;
 		} catch (final NoSuchFieldException e) {
 			throw new IllegalArgumentException("Invalid status code: " + statusCode);
@@ -96,7 +91,6 @@ public final class Http {
 	}
 
 	public static String formatDate(Date date) {
-		// bad, don't call this every time
 		dateMaker.setTimeZone(gmt);
 		return dateMaker.format(date);
 	}

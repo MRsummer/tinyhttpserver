@@ -14,8 +14,8 @@ public class Logger {
 	private final PrintWriter accessLog;
 
 	private Logger() {
-		final File eLog = new File(ConfManager.getConf().getErrorLogPath());
-		final File aLog = new File(ConfManager.getConf().getAccessLogPath());
+		final File eLog = new File(ConfManager.getInstance().getConf().getErrorLogPath());
+		final File aLog = new File(ConfManager.getInstance().getConf().getAccessLogPath());
 		try {
 			errorLog = openLog(eLog);
 			accessLog = openLog(aLog);

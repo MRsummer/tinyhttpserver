@@ -12,17 +12,55 @@ import org.w3c.dom.NodeList;
 public class ConfManager {
 
 	/**
-	 * the path of the configure file, server.conf is the default path
+	 * the path of the configure file, server.conf.xml is the default path
 	 */
 	private static String confFilePath = "server.conf.xml";
 	
 	/**
-	 * configure instance
+	 * conf manager instance
 	 */
-	private static Conf mConfInstance = null;
+	private static ConfManager mConfManagerInstance = null;
 	
 	/**
-	 * conf class constructor, read the configure file, parse xml , and turn the file into properties
+	 * set conf file path (call on server start)
+	 */
+	public static void setConfPath(String path){
+		confFilePath = path;
+	}
+	
+	/**
+	 * get the configure instance
+	 * @return the configure instance
+	 * @throws Exception 
+	 */
+	public Conf getConf(){
+		return mConf;
+	}
+	
+	/**
+	 * conf manager constructor
+	 */
+	private ConfManager(){
+		initConf();
+	}
+		
+	/**
+	 * get instance
+	 */
+	public static ConfManager getInstance(){
+		if(mConfManagerInstance == null){
+			mConfManagerInstance = new ConfManager();
+		}
+		return mConfManagerInstance;
+	}
+	
+	/**
+	 * configure instance
+	 */
+	private static Conf mConf = null;
+	
+	/**
+	 * read the configure file, parse xml , and turn the file into properties
 	 * @throws Exception 
 	 */
 	private static void initConf(){
@@ -62,35 +100,14 @@ public class ConfManager {
 			conf.setServerRoot(serverRoot);
 			conf.setAccessLogPath(accessLog);
 			conf.setErrorLogPath(errorLog);
-			mConfInstance = conf;
+			mConf = conf;
 		}catch(Exception e){
-			
 			//print the error and exit the program
 			e.printStackTrace();
 			System.exit(1);
 		}finally{
 			System.out.println("conf file ok");
 		}
-	}
-	
-	/**
-	 * set the configure file path
-	 * @param path  configure file path
-	 */
-	public static void setConfPath(String path){
-		confFilePath = path;
-	}
-	
-	/**
-	 * get the configure instance
-	 * @return the configure instance
-	 * @throws Exception 
-	 */
-	public static Conf getConf(){
-		if(mConfInstance == null){
-			initConf();
-		}
-		return mConfInstance;
 	}
 	
 }

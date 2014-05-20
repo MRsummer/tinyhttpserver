@@ -27,6 +27,20 @@ public class Conf {
 	 */
 	private String serverRoot;
 	
+	/**
+	 * server version
+	 * @return version string
+	 */
+	private String serverVersion = "1.0";
+	
+	public String getServerVersion() {
+		return serverVersion;
+	}
+
+	public void setServerVersion(String serverVersion) {
+		this.serverVersion = serverVersion;
+	}
+
 	public String getServerName() {
 		return serverName;
 	}

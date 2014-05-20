@@ -6,7 +6,7 @@ import com.httpserver.conf.ConfManager;
 public class TestConf {
 	public static void main(String arg[]){
 		try {
-			Conf conf = ConfManager.getConf();
+			Conf conf = ConfManager.getInstance().getConf();
 			System.out.println(conf.getServerName());
 			System.out.println(conf.getServerPort());
 			System.out.println(conf.getServerRoot());
