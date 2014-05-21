@@ -6,10 +6,8 @@ import java.io.IOException;
 import com.httpserver.conf.Conf;
 import com.httpserver.conf.ConfManager;
 import com.httpserver.eventqueue.Event;
-import com.httpserver.eventqueue.EventQueue;
 import com.httpserver.http.HttpException;
 import com.httpserver.http.HttpRequest;
-import com.httpserver.http.Intent;
 import com.httpserver.logger.Logger;
 
 public class ReadClientHandler extends EventHandler{
@@ -24,8 +22,7 @@ public class ReadClientHandler extends EventHandler{
 	 * handle the event
 	 */
 	@Override
-	public void handleEvent(Event event) {
-		super.handleEvent(event);
+	public void handleEvent() {
 		try {
 			httpRequest = new HttpRequest(socket);
 			
@@ -71,53 +68,13 @@ public class ReadClientHandler extends EventHandler{
 		//check is script
 		if(filePath.endsWith(".php")){
 			//execute script
+			addWriteFcgiEvent(filePath, httpRequest);
 			return;
 		}
 		
 		//get a static file
 		addSendFileEvent(filePath);
 		
-	}
-	
-	/**
-	 * add http exception event
-	 * @param statusCode  http status
-	 */
-	private void addHttpExceptionEvent(int statusCode){
-		Intent intent = new Intent();
-		intent.setType(Intent.TYPE_HTTP_EXCEPTION);
-		intent.putExtra("exceptioncode", statusCode);
-		Event writeEvent = new Event(Event.TYPE_WRITE_CIENT, socket, intent);
-		EventQueue.getInstance().addEvent(writeEvent);
-	}
-	
-	/**
-	 * add list directory event 
-	 * @param dirPath  the directory to show
-	 */
-	private void addListDirectoryEvent(String dirPath){
-		Intent intent = new Intent();
-		intent.setType(Intent.TYPE_LIST_DIRECTORY);
-		intent.putExtra("dirPath", dirPath);
-		Event listDirEvent = new Event(Event.TYPE_WRITE_CIENT, socket, intent);
-		EventQueue.getInstance().addEvent(listDirEvent);
-	}
-	
-	/**
-	 * add send file event
-	 * @param filePath   the file to send
-	 */
-	private void addSendFileEvent(String filePath){
-		Intent intent = new Intent();
-		intent.setType(Intent.TYPE_SEND_FILE);
-		intent.putExtra("filePath", filePath);
-		Event sendFileEvent = new Event(Event.TYPE_WRITE_CIENT, socket, intent);
-		EventQueue.getInstance().addEvent(sendFileEvent);
-	}
-	
-	@Override
-	public void run() {
-		handleEvent(event);
 	}
 
 }

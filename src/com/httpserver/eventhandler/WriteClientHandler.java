@@ -9,15 +9,13 @@ import com.httpserver.http.Intent;
 import com.httpserver.logger.Logger;
 
 public class WriteClientHandler extends EventHandler{
-	
+
 	public WriteClientHandler(Event event) {
 		super(event);
 	}
 
 	@Override
-	public void handleEvent(Event event) {
-		super.handleEvent(event);
-
+	public void handleEvent() {
 		//judge the event type
 		Intent intent = (Intent)event.getExtra();
 		switch(intent.getType()){
@@ -51,11 +49,5 @@ public class WriteClientHandler extends EventHandler{
 			break;
 		}
 	}
-
-	@Override
-	public void run() {
-		handleEvent(event);
-	}
-
 
 }

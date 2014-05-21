@@ -25,6 +25,11 @@ public class HttpResponse {
 	private Socket socket = null;
 	
 	/**
+	 * output stream
+	 */
+	private OutputStream out = null;
+	
+	/**
 	 * the stream writer of the socket
 	 */
 	private OutputStreamWriter writer = null;
@@ -40,7 +45,7 @@ public class HttpResponse {
 	 */
 	public HttpResponse(Socket socket) throws IOException{
 		this.socket = socket;
-		OutputStream out = socket.getOutputStream();
+		out = socket.getOutputStream();
 		writer = new OutputStreamWriter(new BufferedOutputStream(out));
 	}
 	
@@ -52,12 +57,16 @@ public class HttpResponse {
 		responseCode = code;
 	}
 	
+	public OutputStream getOutputStream(){
+		return out;
+	}
+	
 	/**
 	 * send http status
 	 * @param code
 	 * @throws IOException
 	 */
-	private void sendStatus() throws IOException {
+	public void sendStatus() throws IOException {
 		final StringBuffer status = new StringBuffer(16);
 		status.append("HTTP/1.1 ");
 		status.append(responseCode);
@@ -71,7 +80,7 @@ public class HttpResponse {
 	 * finish http headers
 	 * @throws IOException
 	 */
-	private void finishHeaders() throws IOException {
+	public void finishHeaders() throws IOException {
 		writer.write("\r\n");
 		writer.flush();
 	}
@@ -80,7 +89,7 @@ public class HttpResponse {
 	 * finish http response
 	 * @throws IOException
 	 */
-	private void finishResponse() throws IOException {
+	public void finishResponse() throws IOException {
 		writer.flush();
 		socket.close();
 	}
@@ -101,7 +110,7 @@ public class HttpResponse {
 	 * set the basic headers
 	 * @throws IOException
 	 */
-	private void sendBasicHeaders() throws IOException {
+	public void sendBasicHeaders() throws IOException {
 		sendHeaderEntry("Date: " + Http.formatDate(new Date()));
 		sendHeaderEntry("Server: " + ConfManager.getInstance().getConf().getServerVersion());
 		sendHeaderEntry("Connection: close");
@@ -113,7 +122,7 @@ public class HttpResponse {
 	 *	//sendHeaderEntry("Last-Modified: " + Http.formatDate(new Date(request.getRequestFile().lastModified())));
 	 *	//sendHeaderEntry("Content-Type: " + request.getMimeType());
 	 */
-	private void sendHeaders() {
+	public void sendHeaders() {
 		try {
 			Iterator<Entry<String, String>> iter = headerMap.entrySet().iterator(); 
 			while (iter.hasNext()) { 

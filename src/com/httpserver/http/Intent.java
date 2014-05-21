@@ -9,6 +9,8 @@ public class Intent {
 	public static final int TYPE_HTTP_EXCEPTION = 1;
 	public static final int TYPE_LIST_DIRECTORY = 2;
 	public static final int TYPE_SEND_FILE = 3;
+	public static final int TYPE_WRITE_FCGI = 4;
+	public static final int TYPE_READ_FCGI = 5;
 	
 	/**
 	 * intent type

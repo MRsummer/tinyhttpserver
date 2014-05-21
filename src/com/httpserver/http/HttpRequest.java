@@ -22,8 +22,8 @@ public class HttpRequest {
 	/**
 	 * http version enumeration
 	 */
-	private static final int HTTP_1_0 = 1;
-	private static final int HTTP_1_1 = 2;
+	public static final int HTTP_1_0 = 1;
+	public static final int HTTP_1_1 = 2;
 	
 	/**
 	 * buffer size of the read buffer
@@ -133,8 +133,10 @@ public class HttpRequest {
 		
 		if(method.equals("GET")){
 			this.method = METHOD_GET; 
+			this.methodStr = "GET";
 		}else if(method.equals("POST")){
 			this.method = METHOD_POST;
+			this.methodStr = "POST";
 		}else{
 			throw new HttpException(405);//unsupported http method
 		}
@@ -148,6 +150,18 @@ public class HttpRequest {
 		}else{
 			throw new HttpException(505);//bad http version
 		}
+	}
+	
+	/**
+	 * method string presentation
+	 */
+	private String methodStr = null;
+	
+	/**
+	 * return method string
+	 */
+	public String getMethodStr(){
+		return this.methodStr;
 	}
 	
 	/**

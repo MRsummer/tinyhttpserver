@@ -3,6 +3,10 @@ package com.httpserver.eventhandler;
 import java.net.Socket;
 
 import com.httpserver.eventqueue.Event;
+import com.httpserver.eventqueue.EventQueue;
+import com.httpserver.fcgi.FastCGIHandler;
+import com.httpserver.http.HttpRequest;
+import com.httpserver.http.Intent;
 
 public abstract class EventHandler implements Runnable{
 	
@@ -17,16 +21,81 @@ public abstract class EventHandler implements Runnable{
 	 */
 	public EventHandler(Event event){
 		this.event = event;
+		this.eventType = event.getEventType();
+		this.socket = event.getSocket();
+		this.extra = event.getExtra();
 	}
 	
 	/**
 	 * an event handler must be able to handle an event
 	 * @param event
 	 */
-	public void handleEvent(Event event){
-		eventType = event.getEventType();
-		socket = event.getSocket();
-		extra = event.getExtra();
+	public abstract void handleEvent();
+	
+	@Override
+	public void run(){
+		handleEvent();
+	}
+	
+	/**
+	 * add http exception event
+	 * @param statusCode  http status
+	 */
+	protected void addHttpExceptionEvent(int statusCode){
+		Intent intent = new Intent();
+		intent.setType(Intent.TYPE_HTTP_EXCEPTION);
+		intent.putExtra("exceptioncode", statusCode);
+		Event writeEvent = new Event(Event.TYPE_WRITE_CIENT, socket, intent);
+		EventQueue.getInstance().addEvent(writeEvent);
+	}
+	
+	/**
+	 * add list directory event 
+	 * @param dirPath  the directory to show
+	 */
+	protected void addListDirectoryEvent(String dirPath){
+		Intent intent = new Intent();
+		intent.setType(Intent.TYPE_LIST_DIRECTORY);
+		intent.putExtra("dirPath", dirPath);
+		Event listDirEvent = new Event(Event.TYPE_WRITE_CIENT, socket, intent);
+		EventQueue.getInstance().addEvent(listDirEvent);
+	}
+	
+	/**
+	 * add send file event
+	 * @param filePath   the file to send
+	 */
+	protected void addSendFileEvent(String filePath){
+		Intent intent = new Intent();
+		intent.setType(Intent.TYPE_SEND_FILE);
+		intent.putExtra("filePath", filePath);
+		Event sendFileEvent = new Event(Event.TYPE_WRITE_CIENT, socket, intent);
+		EventQueue.getInstance().addEvent(sendFileEvent);
+	}
+	
+	/**
+	 * add request fast cgi event
+	 * @param filePath  the cgi script file path
+	 */
+	protected void addWriteFcgiEvent(String filePath, HttpRequest httpRequest){
+		Intent intent = new Intent();
+		intent.setType(Intent.TYPE_WRITE_FCGI);
+		intent.putExtra("httprequest", httpRequest);
+		intent.putExtra("scriptpath", filePath);
+		Event requestFcgiEvent = new Event(Event.TYPE_WRITE_FCGI, socket, intent);
+		EventQueue.getInstance().addEvent(requestFcgiEvent);
+	}
+	
+	/**
+	 * add read fcgi event
+	 * @param fcgiHandler
+	 */
+	protected void addReadFcgiEvent(FastCGIHandler fcgiHandler){
+		Intent readFcigIntent = new Intent();
+		readFcigIntent.setType(Intent.TYPE_READ_FCGI);
+		readFcigIntent.putExtra("fcgihandler", fcgiHandler);
+		Event event = new Event(Event.TYPE_READ_FCGI, socket, readFcigIntent);
+		EventQueue.getInstance().addEvent(event);
 	}
 	
 }

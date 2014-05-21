@@ -4,7 +4,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.httpserver.eventhandler.ReadClientHandler;
+import com.httpserver.eventhandler.ReadFcgiHandler;
 import com.httpserver.eventhandler.WriteClientHandler;
+import com.httpserver.eventhandler.WriteFcgiHandler;
 import com.httpserver.logger.Logger;
 
 public class EventDispatcherThread extends Thread{
@@ -53,9 +55,11 @@ public class EventDispatcherThread extends Thread{
 				break;
 				
 			case Event.TYPE_READ_FCGI:
+				executorService.execute(new ReadFcgiHandler(event));
 				break;
 				
 			case Event.TYPE_WRITE_FCGI:
+				executorService.execute(new WriteFcgiHandler(event));
 				break;
 				
 			default:
