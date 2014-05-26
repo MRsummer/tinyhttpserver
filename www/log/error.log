@@ -185,3 +185,6 @@ Wed May 21 02:17:58 CST 2014: [send file error : java.net.SocketException: Broke
 Wed May 21 02:17:58 CST 2014: [send file error : java.net.SocketException: Broken pipe]
 Wed May 21 14:56:53 CST 2014: [read fcgi error : java.net.SocketException: Broken pipe]
 Wed May 21 14:57:17 CST 2014: [read fcgi error : java.net.SocketException: Broken pipe]
+Wed May 21 16:21:28 CST 2014: [read fcgi error : java.net.SocketException: Broken pipe]
+Wed May 21 16:21:28 CST 2014: [read fcgi error : java.net.SocketException: Broken pipe]
+Wed May 21 16:53:17 CST 2014: [read fcgi error : java.net.SocketException: Broken pipe]

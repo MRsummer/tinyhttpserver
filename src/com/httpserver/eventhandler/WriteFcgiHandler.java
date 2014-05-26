@@ -27,7 +27,13 @@ public class WriteFcgiHandler extends EventHandler{
 		RequestAdapter fcgiRequest = new RequestAdapter(){
 
 			@Override
-			public InputStream getInputStream() {
+			public String getBody(){
+				return request.getBody();
+			}
+			
+			@Override
+			public InputStream getInputStream() throws IOException {
+//				return socket.getInputStream();
 				return null;
 			}
 			
@@ -73,7 +79,7 @@ public class WriteFcgiHandler extends EventHandler{
 
 			@Override
 			public String getQueryString() {
-				return "";
+				return request.getQueryString();
 			}
 
 			@Override
@@ -93,7 +99,8 @@ public class WriteFcgiHandler extends EventHandler{
 
 			@Override
 			public int getContentLength() {
-				return 0;
+				return request.getContentLength();
+//				return 0;
 			}
 
 			@Override

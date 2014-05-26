@@ -19,6 +19,7 @@
 */
 package com.httpserver.fcgi;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 
@@ -30,7 +31,7 @@ import java.util.Enumeration;
  */
 public interface RequestAdapter {
 
-    public InputStream getInputStream();
+    public InputStream getInputStream() throws IOException;
 
     public String getRequestURI();
 
@@ -61,4 +62,6 @@ public interface RequestAdapter {
     public Enumeration<String> getHeaderNames();
 
     public String getHeader(String key);
+
+	public String getBody();
 }

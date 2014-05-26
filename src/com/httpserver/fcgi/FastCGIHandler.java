@@ -166,25 +166,40 @@ public class FastCGIHandler {
             ws.write(0);
         }
         
-        System.out.println("write header");
+        System.out.println("write environment");
 
         setEnvironment(ws, request);
         
-        System.out.println("write environment");
+        System.out.println("write header");
 
+        writeHeader(ws, FCGI_PARAMS, 0);
+        
+        System.out.println("write post data");
+
+        String body = request.getBody();
+        if(body != null){
+        	byte[] buf = body.getBytes();
+        	writeHeader(ws, FCGI_STDIN, buf.length);
+        	ws.write(buf, 0, buf.length);
+        	writeHeader(ws, FCGI_STDIN, 0);//stream comes to end
+        	
+        	System.out.println("body-->"+body);
+        	System.out.println("body length-->"+buf.length);
+        }
+
+        
 //        InputStream in = request.getInputStream();
 //        byte[] buf = new byte[4096];
 //        int len = buf.length;
 //        int sublen;
-
-        writeHeader(ws, FCGI_PARAMS, 0);
-
 //        boolean hasStdin = false;
 //        while ((sublen = in.read(buf, 0, len)) > 0) {
 //            hasStdin = true;
 //            writeHeader(ws, FCGI_STDIN, sublen);
 //            ws.write(buf, 0, sublen);
-//        }
+//            
+//            System.out.println("post data -->" + buf);
+////        }
 //
 //        if (hasStdin) {
 //            writeHeader(ws, FCGI_STDIN, 0);

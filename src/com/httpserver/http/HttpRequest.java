@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+
+import com.httpserver.logger.Logger;
 
 public class HttpRequest {
 	/**
@@ -48,7 +52,12 @@ public class HttpRequest {
 	/**
 	 * request uri
 	 */
-	private String uri;
+	private String uri = null;
+	
+	/**
+	 * request query string
+	 */
+	private String queryString = null;
 	
 	/**
 	 * http version (1.0 or 1.1)
@@ -75,7 +84,6 @@ public class HttpRequest {
 		socket = client;
 		BufferedInputStream in = new BufferedInputStream(socket.getInputStream(), BUFFER_SIZE);
 		InputStreamReader input = new InputStreamReader(in, "ASCII");
-		boolean enterBody = false;
 		
 		//get the first line of header
 		parseHeader(input);
@@ -85,24 +93,22 @@ public class HttpRequest {
 			
 			System.out.println("start read");
 			String line = readLine(input, false);
+			System.out.println();
 			System.out.println("read end");
 			
 			//comes to the end of the header of the request
-			if(line.equals("")){
-				enterBody = true;
-				break;//TODO come to the end of the header
+			if(line.trim().equals("")){
+				//comes to the body of the request
+				if(getContentLength() > 0){
+					readBody(input);
+				}
+				break;//come to the end of the header
 			}
 			
-			//comes to the body of the request
-			if(enterBody){
-				//read body data
-				
-			}else{
-				//get headers
-				final int split = line.indexOf(':');
-				if (split == -1) continue;
-				header.put(line.substring(0, split), line.substring(split));
-			}
+			//get headers
+			final int split = line.indexOf(':');
+			if (split == -1) continue;
+			header.put(line.substring(0, split), line.substring(split+1));
 			
 			System.out.println(line+"<<<");
 		}
@@ -121,11 +127,11 @@ public class HttpRequest {
 		StringTokenizer st = new StringTokenizer(firstLine);
 		
 		String method = "";
-		String uri = "";
+		String uriStr = "";
 		String httpVersion = "";
 		try{
 			method = st.nextToken().toUpperCase();
-			uri = st.nextToken();
+			uriStr = st.nextToken();
 			httpVersion = st.nextToken().toUpperCase();
 		}catch(Exception e){
 			throw new HttpException(400);//invalid http request
@@ -141,7 +147,13 @@ public class HttpRequest {
 			throw new HttpException(405);//unsupported http method
 		}
 		
-		this.uri = uri;
+		try {
+			URI uri = new URI(uriStr);
+			this.uri = uri.getPath();//get uri path
+			this.queryString = uri.getQuery();//get query string
+		} catch (URISyntaxException e) {
+			Logger.getLogger().logError("error on new uri : "+e.toString());
+		}
 		
 		if(httpVersion.equals("HTTP/1.0")){
 			this.httpVersion = HTTP_1_0;
@@ -150,6 +162,32 @@ public class HttpRequest {
 		}else{
 			throw new HttpException(505);//bad http version
 		}
+	}
+	
+	/**
+	 * request body
+	 */
+	private String body = null;
+	
+	/**
+	 * get body  (write fcgi)
+	 */
+	public String getBody(){
+		return body;
+	}
+	
+	/**
+	 * read the body of the http request
+	 * @param r  stream reader
+	 * @throws IOException  occurred when socket comes to an error
+	 */
+	private void readBody(Reader r) throws IOException{
+		int length = getContentLength();
+		if(length == 0) return;
+		char[] bytes = new char[length];
+		r.read(bytes);
+		body = new String(bytes);
+		System.out.println("body-->"+body);
 	}
 	
 	/**
@@ -162,6 +200,20 @@ public class HttpRequest {
 	 */
 	public String getMethodStr(){
 		return this.methodStr;
+	}
+	
+	/**
+	 * get request body length
+	 * @return  the length of request body
+	 */
+	public int getContentLength(){
+		if(header.get("Content-Length") != null){
+			return Integer.parseInt(header.get("Content-Length").trim());
+		}else if(header.get("content-length") != null){
+			return Integer.parseInt(header.get("content-length").trim());
+		}else{
+			return 0;
+		}
 	}
 	
 	/**
@@ -178,8 +230,10 @@ public class HttpRequest {
 	 */
 	private String readLine(Reader r, boolean multiLine) throws IOException {
 		final StringBuffer buffer = new StringBuffer(HEADER_LENGTH);
+		System.out.println("start read line");
 		while (true) {
 			final char c = (char) r.read();
+			System.out.print(c);
 			if (c == '\r') {
 				continue;
 			} else if (c == '\n') {
@@ -204,13 +258,21 @@ public class HttpRequest {
 	public int getMethod(){
 		return this.method;
 	}
-	
+
 	/**
 	 * get the request uri
-	 * @return
+	 * @return  the request uri like "/index.php"
 	 */
 	public String getUri(){
 		return this.uri;
+	}
+	
+	/**
+	 * get query string
+	 * @return  the query string like "a=4&b=5"
+	 */
+	public String getQueryString(){
+		return this.queryString;
 	}
 	
 	/**
