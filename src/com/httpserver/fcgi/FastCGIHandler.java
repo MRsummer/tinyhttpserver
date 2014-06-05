@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 
@@ -166,7 +166,7 @@ public class FastCGIHandler {
             ws.write(0);
         }
         
-        System.out.println("write environment");
+        System.out.println("write environment ---");
 
         setEnvironment(ws, request);
         
@@ -221,6 +221,11 @@ public class FastCGIHandler {
     	FastCGIInputStream is = new FastCGIInputStream(fcgiSocket);
 
         int ch = parseHeaders(response, is);
+        
+        if(endResponse) {
+        	fcgiSocket.close();
+        	return;
+        }
 
         response.onFinishHeader();
         
@@ -243,85 +248,6 @@ public class FastCGIHandler {
         
     }
     
-    /*
-    public void service(RequestAdapter request, ResponseAdapter response) throws IOException {
-
-        OutputStream out = response.getOutputStream();
-
-        Socket fcgiSocket = connectionFactory.getConnection();
-        fcgiSocket.setSoTimeout((int) READ_TIMEOUT);
-
-        try {
-            synchronized (fcgiSocket) {
-                handleRequest(request, response, fcgiSocket, out, keepAlive);
-            }
-        }
-        finally {
-            if (fcgiSocket != null) {
-                connectionFactory.releaseConnection(fcgiSocket);
-            }
-            fcgiSocket.close();
-        }
-    }
-
-    private boolean handleRequest(RequestAdapter req, ResponseAdapter res, Socket fcgiSocket, OutputStream out, boolean keepalive) throws IOException {
-        OutputStream ws = fcgiSocket.getOutputStream();
-
-        writeHeader(ws, FCGI_BEGIN_REQUEST, 8);
-
-        int role = FCGI_RESPONDER;
-
-        ws.write(role >> 8);
-        ws.write(role);
-        ws.write(keepalive ? FCGI_KEEP_CONN : 0); // flags
-        for (int i = 0; i < 5; i++) {
-            ws.write(0);
-        }
-        
-        System.out.println("write header");
-
-        setEnvironment(ws, req);
-        
-        System.out.println("write environment");
-
-        InputStream in = req.getInputStream();
-        byte[] buf = new byte[4096];
-        int len = buf.length;
-        int sublen;
-
-        writeHeader(ws, FCGI_PARAMS, 0);
-
-        boolean hasStdin = false;
-        while ((sublen = in.read(buf, 0, len)) > 0) {
-            hasStdin = true;
-            writeHeader(ws, FCGI_STDIN, sublen);
-            ws.write(buf, 0, sublen);
-        }
-
-        if (hasStdin) {
-            writeHeader(ws, FCGI_STDIN, 0);
-        }
-        
-        System.out.println("handle stdin");
-
-        FastCGIInputStream is = new FastCGIInputStream(fcgiSocket);
-
-        int ch = parseHeaders(res, is);
-
-        if (ch >= 0) {
-            out.write(ch);
-        }
-
-        while ((ch = is.read()) >= 0) {
-            out.write(ch);
-        }
-        
-        System.out.println("get output data");
-
-        return !is.isDead() && keepalive;
-    }
-    */
-
     private void setEnvironment(OutputStream ws, RequestAdapter req) throws IOException {
         addHeader(ws, "REQUEST_URI", req.getRequestURI());
         addHeader(ws, "REQUEST_METHOD", req.getMethod());
@@ -353,6 +279,7 @@ public class FastCGIHandler {
         addHeader(ws, "PATH_INFO", req.getContextPath() + scriptPath);
         addHeader(ws, "PATH_TRANSLATED", req.getRealPath(scriptPath));
         addHeader(ws, "SCRIPT_FILENAME", req.getRealPath(scriptPath));
+        
         int contentLength = req.getContentLength();
         if (contentLength < 0) {
             addHeader(ws, "CONTENT_LENGTH", "0");
@@ -363,22 +290,40 @@ public class FastCGIHandler {
 
         addHeader(ws, "DOCUMENT_ROOT", req.getRealPath("/"));
 
-        Enumeration<String> e = req.getHeaderNames();
-        while (e.hasMoreElements()) {
-            String key = (String) e.nextElement();
-            String value = req.getHeader(key);
-
-            if (!isHeaderFiltered(key)) {
-                if (key.equalsIgnoreCase("content-length")) {
-                    addHeader(ws, "CONTENT_LENGTH", value);
-                }
-                else if (key.equalsIgnoreCase("content-type")) {
-                    addHeader(ws, "CONTENT_TYPE", value);
-                }
-                else {
-                    addHeader(ws, convertHeader(key), value);
-                }
-            }
+//        Enumeration<String> e = req.getHeaderNames();
+//        while (e.hasMoreElements()) {
+//            String key = (String) e.nextElement();
+//            String value = req.getHeader(key);
+//            
+//            System.out.println("fcgi header : "+key+"--->"+value);
+//
+//            if (!isHeaderFiltered(key)) {
+//                if (key.equalsIgnoreCase("content-length")) {
+//                    addHeader(ws, "CONTENT_LENGTH", value);
+//                }
+//                else if (key.equalsIgnoreCase("content-type")) {
+//                    addHeader(ws, "CONTENT_TYPE", value);
+//                }
+//                else {
+//                    addHeader(ws, convertHeader(key), value);
+//                }
+//            }
+//        }
+        
+        HashMap<String, String> e = req.getHeaderNames();
+        Object[] keys = e.keySet().toArray();
+        
+        for(int i = 0;i < e.size();i ++){
+        	String key = (String)keys[i];
+        	String value = e.get(key);
+        	
+			if (key.equalsIgnoreCase("content-length")) {
+				addHeader(ws, "CONTENT_LENGTH", value);
+			}else if (key.equalsIgnoreCase("content-type")) {
+				addHeader(ws, "CONTENT_TYPE", value);
+			}else {
+				addHeader(ws, convertHeader(key), value);
+			}
         }
     }
 
@@ -387,7 +332,9 @@ public class FastCGIHandler {
         sb.append(key.toUpperCase().replace('-', '_'));
         return sb.toString();
     }
-
+    
+    private boolean endResponse = false;
+    
     private int parseHeaders(ResponseAdapter res, InputStream is) throws IOException {
         String key = "";
         String value = "";
@@ -447,6 +394,7 @@ public class FastCGIHandler {
             }
             else if (key.equalsIgnoreCase("location")) {
                 res.sendRedirect(value);
+                endResponse = true;
             }
             else {
                 res.addHeader(key, value);
@@ -457,6 +405,8 @@ public class FastCGIHandler {
     }
 
     private void addHeader(OutputStream ws, String key, String value) throws IOException {
+    	
+    	System.out.println("add header : "+key+"--->"+value);
 
         if (value != null) {
 

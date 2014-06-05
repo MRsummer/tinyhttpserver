@@ -41,12 +41,16 @@ public abstract class EventHandler implements Runnable{
 	 * add http exception event
 	 * @param statusCode  http status
 	 */
-	protected void addHttpExceptionEvent(int statusCode){
+	protected void addHttpExceptionEvent(int statusCode, String data){
 		Intent intent = new Intent();
 		intent.setType(Intent.TYPE_HTTP_EXCEPTION);
 		intent.putExtra("exceptioncode", statusCode);
+		intent.putExtra("data", data);
 		Event writeEvent = new Event(Event.TYPE_WRITE_CIENT, socket, intent);
 		EventQueue.getInstance().addEvent(writeEvent);
+	}
+	protected void addHttpExceptionEvent(int statusCode){
+		addHttpExceptionEvent(statusCode, "");
 	}
 	
 	/**

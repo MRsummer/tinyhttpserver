@@ -1,16 +1,13 @@
 package com.httpserver.conf;
 
-public class Conf {
+import java.util.Vector;
 
-	/**
-	 * server's name
-	 */
-	private String serverName;
+public class Conf {
 	
 	/**
-	 * server's tcp port
+	 * servers
 	 */
-	private int serverPort;
+	private Vector<Server> servers = new Vector<Server>();
 	
 	/**
 	 * path of the access log 
@@ -21,11 +18,6 @@ public class Conf {
 	 * path of the error log
 	 */
 	private String errorLogPath;
-	
-	/**
-	 * server root file path
-	 */
-	private String serverRoot;
 	
 	/**
 	 * server version
@@ -40,21 +32,20 @@ public class Conf {
 	public void setServerVersion(String serverVersion) {
 		this.serverVersion = serverVersion;
 	}
-
-	public String getServerName() {
-		return serverName;
+	
+	public void addServer(Server server){
+		servers.add(server);
 	}
-
-	public void setServerName(String serverName) {
-		this.serverName = serverName;
+	
+	public Vector<Server> getServers(){
+		return servers;
 	}
-
-	public int getServerPort() {
-		return serverPort;
-	}
-
-	public void setServerPort(int serverPort) {
-		this.serverPort = serverPort;
+	
+	public Server getServerByPort(int port){
+		for(int i=0;i < servers.size();i ++){
+			if(servers.get(i).getServerPort() == port) return servers.get(i);
+		}
+		return null;
 	}
 
 	public String getAccessLogPath() {
@@ -72,13 +63,5 @@ public class Conf {
 	public void setErrorLogPath(String errorLogPath) {
 		this.errorLogPath = errorLogPath;
 	}
-
-	public String getServerRoot() {
-		return serverRoot;
-	}
-
-	public void setServerRoot(String serverRoot) {
-		this.serverRoot = serverRoot;
-	}
-
+	
 }

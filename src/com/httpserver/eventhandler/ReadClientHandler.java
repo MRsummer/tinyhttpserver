@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.httpserver.conf.Conf;
 import com.httpserver.conf.ConfManager;
+import com.httpserver.conf.Server;
 import com.httpserver.eventqueue.Event;
 import com.httpserver.http.HttpException;
 import com.httpserver.http.HttpRequest;
@@ -38,10 +39,18 @@ public class ReadClientHandler extends EventHandler{
 			
 		}
 		
+		//access log
+		Logger.getLogger().logAccess(httpRequest);
+		
 		//get the absolute filepath
 		String uri = httpRequest.getUri();
 		Conf conf = ConfManager.getInstance().getConf();
-		String serverRoot = conf.getServerRoot();
+		Server s = conf.getServerByPort(httpRequest.getHostPort());
+		if(s == null) {
+			Logger.getLogger().logError("read client handler, get server by port error , port num : "+httpRequest.getHostPort());
+			return;
+		}
+		String serverRoot = s.getServerRoot();
 		String filePath = serverRoot.endsWith("/") ? serverRoot.substring(0, -1) : serverRoot;
 		
 		//check path is ok

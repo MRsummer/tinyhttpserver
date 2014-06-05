@@ -1,5 +1,7 @@
 package com.httpserver.core;
 
+import java.util.Vector;
+
 import com.httpserver.conf.Conf;
 import com.httpserver.conf.ConfManager;
 import com.httpserver.eventqueue.EventDispatcherThread;
@@ -15,7 +17,7 @@ public class Core {
 	/**
 	 * server thread (will be used to stop the server)
 	 */
-	private ServerSocketThread serverSocketThread = null;
+	private Vector<ServerSocketThread> serverSocketThreads = null;
 	
 	/**
 	 * dispatcher thread (will be used to stop the server)
@@ -30,8 +32,12 @@ public class Core {
 		mConf = getConf(); 
 		
 		//start server socket thread
-		serverSocketThread = new ServerSocketThread(mConf.getServerPort());
-		serverSocketThread.start();
+		serverSocketThreads = new Vector<ServerSocketThread>();
+		for(int i=0;i < mConf.getServers().size();i++){
+			ServerSocketThread serverSocketThread = new ServerSocketThread(mConf.getServers().get(i).getServerPort());
+			serverSocketThreads.add(serverSocketThread);
+			serverSocketThread.start();
+		}
 		
 		//start event dispatcher thread
 		dispatcherThread = new EventDispatcherThread();
@@ -43,7 +49,9 @@ public class Core {
 	 * stop the server
 	 */
 	public void stop(){
-		serverSocketThread.stopServerThread();
+		for(int i=0;i < serverSocketThreads.size();i++){
+			serverSocketThreads.get(i).stopServerThread();
+		}
 		dispatcherThread.stopDispatcherThread();
 	}
 	
@@ -52,12 +60,6 @@ public class Core {
 	 * @return  the conf object
 	 */
 	private Conf getConf(){
-//		OptionParser optionParser = new OptionParser();
-//		OptionSet optionSet = optionParser.parse("-c");
-//		if(optionSet.hasArgument("-c")){
-//			String filePath =  (String)optionSet.valueOf("c");
-//			ConfManager.setConfPath(filePath);
-//		}
 		return ConfManager.getInstance().getConf();
 	}
 

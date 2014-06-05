@@ -2,7 +2,7 @@ package com.httpserver.eventhandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
+import java.util.HashMap;
 
 import com.httpserver.conf.ConfManager;
 import com.httpserver.eventqueue.Event;
@@ -49,17 +49,17 @@ public class WriteFcgiHandler extends EventHandler{
 
 			@Override
 			public String getServerName() {
-				return ConfManager.getInstance().getConf().getServerName();
+				return ConfManager.getInstance().getConf().getServerByPort(request.getHostPort()).getServerName();
 			}
 
 			@Override
 			public int getServerPort() {
-				return ConfManager.getInstance().getConf().getServerPort();
+				return ConfManager.getInstance().getConf().getServerByPort(request.getHostPort()).getServerPort();//in case of port cheating 
 			}
 
 			@Override
 			public String getRemoteAddr() {
-				return request.getHostAddress();
+				return request.getRemoteAddress();
 			}
 
 			@Override
@@ -104,17 +104,25 @@ public class WriteFcgiHandler extends EventHandler{
 			}
 
 			@Override
-			public Enumeration<String> getHeaderNames() {
-				return new Enumeration<String>(){
-					@Override
-					public boolean hasMoreElements() {
-						return false;
-					}
-					@Override
-					public String nextElement() {
-						return null;
-					}
-				};
+			public HashMap<String, String> getHeaderNames() {
+				
+				return request.getHeaders();
+				
+//				return new Enumeration<String>(){
+//					private Object[] headerNames = request.getHeaders().keySet().toArray();
+//					private int length = headerNames.length;
+//					private int index = -1;
+//					
+//					@Override
+//					public boolean hasMoreElements() {
+//						return index <= length - 1;
+//					}
+//					@Override
+//					public String nextElement() {
+//						index++;
+//						return (String)headerNames[index];
+//					}
+//				};
 			}
 
 			@Override

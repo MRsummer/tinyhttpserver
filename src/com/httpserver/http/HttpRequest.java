@@ -108,7 +108,7 @@ public class HttpRequest {
 			//get headers
 			final int split = line.indexOf(':');
 			if (split == -1) continue;
-			header.put(line.substring(0, split), line.substring(split+1));
+			header.put(line.substring(0, split), line.substring(split+2));
 			
 			System.out.println(line+"<<<");
 		}
@@ -217,6 +217,33 @@ public class HttpRequest {
 	}
 	
 	/**
+	 * get the http request host (host is a must)
+	 * @return the request host
+	 */
+	public String getHost(){
+		if(header.get("Host") != null){
+			return header.get("Host").trim();
+		}else{
+			return "localhost";
+		}
+	}
+	
+	/**
+	 * get the port in the host
+	 * @return the request server port
+	 */
+	public int getHostPort(){
+		String host = getHost();
+		int index = host.indexOf(":");
+		if(index < 0){
+			return 80;
+		}else{
+			String port = host.substring(index+1);
+			return Integer.parseInt(port);
+		}
+	}
+	
+	/**
 	 * stream has reached the end
 	 */
 	private boolean streamEnd = false;
@@ -287,7 +314,7 @@ public class HttpRequest {
 	 * get the remote ip address
 	 * @return the remote ip address
 	 */
-	public String getHostAddress(){
+	public String getRemoteAddress(){
 		return socket.getInetAddress().getHostAddress();
 	}
 	
@@ -295,8 +322,16 @@ public class HttpRequest {
 	 * get the remote port number
 	 * @return  the remote port number
 	 */
-	public int getPort(){
+	public int getRemotePort(){
 		return socket.getPort();
+	}
+	
+	/**
+	 * get the http request headers
+	 * @return  http request headers
+	 */
+	public HashMap<String, String> getHeaders(){
+		return header;
 	}
 
 }

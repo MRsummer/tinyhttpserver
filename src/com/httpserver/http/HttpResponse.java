@@ -57,6 +57,10 @@ public class HttpResponse {
 		responseCode = code;
 	}
 	
+	public int getResponseCode(){
+		return responseCode;
+	}
+	
 	public OutputStream getOutputStream(){
 		return out;
 	}
@@ -193,6 +197,14 @@ public class HttpResponse {
 		//send text
 		writer.write(text);
 		//finish response
+		finishResponse();
+	}
+	
+	public void sendVoid() throws IOException{
+		sendStatus();
+		sendBasicHeaders();
+		sendHeaders();
+		finishHeaders();
 		finishResponse();
 	}
 	

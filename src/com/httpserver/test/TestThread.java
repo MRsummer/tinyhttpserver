@@ -28,8 +28,8 @@ public class TestThread {
 		executor.submit(new Runnable(){
 			@Override
 			public void run() {
-				String s = null;
-				System.out.println("exception"+s.length());
+//				String s = null;
+//				System.out.println("exception"+s.length());
 			}
 		});
 		for(int i=0;i < 100;i ++){

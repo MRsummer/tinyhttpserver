@@ -65,27 +65,44 @@ public class ConfManager {
 	 */
 	private static void initConf(){
 		try{
+			//instance conf
+			Conf conf = new Conf();
+			
 			//get the configure file content
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(confFilePath);
 			
 			//parse xml file and get properties
-			NodeList serverList = doc.getElementsByTagName("server");
-			Element server = (Element) serverList.item(0);
-			String serverName = server.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
-			String serverPort = server.getElementsByTagName("port").item(0).getFirstChild().getNodeValue();
-			String serverRoot = server.getElementsByTagName("root").item(0).getFirstChild().getNodeValue();
+			NodeList config = doc.getElementsByTagName("config");
+			Element server = (Element) config.item(0);
+			
+			NodeList serverList = server.getElementsByTagName("server");
+			for(int i=0;i < serverList.getLength();i++){
+				Element serverInstance = (Element)serverList.item(i);
+				String serverName = serverInstance.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+				String serverPort = serverInstance.getElementsByTagName("port").item(0).getFirstChild().getNodeValue();
+				String serverRoot = serverInstance.getElementsByTagName("root").item(0).getFirstChild().getNodeValue();
+				//check file and directory access
+				File serverRootDir = new File(serverRoot);
+				if(!( serverRootDir.isDirectory() && serverRootDir.isAbsolute() && serverRootDir.exists() )){
+					throw new Exception("server root not found, server root must be an absolute directory : "+serverRoot);
+				}
+				
+				//add server instance to conf
+				Server s = new Server();
+				s.setServerName(serverName);
+				s.setServerPort(Integer.valueOf(serverPort));
+				s.setServerRoot(serverRoot);
+				conf.addServer(s);
+				
+			}
+			
 			String accessLog = server.getElementsByTagName("accesslog").item(0).getFirstChild().getNodeValue();
 			String errorLog = server.getElementsByTagName("errorlog").item(0).getFirstChild().getNodeValue();
 			
-			//check file and directory access
-			File serverRootDir = new File(serverRoot);
 			File accessLogFile = new File(accessLog);
 			File errorLogFile = new File(errorLog);
-			if(!( serverRootDir.isDirectory() && serverRootDir.isAbsolute() && serverRootDir.exists() )){
-				throw new Exception("server root not found, server root must be an absolute directory : "+serverRoot);
-			}
 			if(! accessLogFile.exists()){
 				throw new Exception("accesslog is not found : "+accessLog);
 			}
@@ -93,11 +110,6 @@ public class ConfManager {
 				throw new Exception("errorlog is not found : "+errorLog);
 			}
 			
-			//instance conf
-			Conf conf = new Conf();
-			conf.setServerName(serverName);
-			conf.setServerPort(Integer.valueOf(serverPort));
-			conf.setServerRoot(serverRoot);
 			conf.setAccessLogPath(accessLog);
 			conf.setErrorLogPath(errorLog);
 			mConf = conf;

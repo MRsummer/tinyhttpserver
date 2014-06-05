@@ -21,10 +21,23 @@ public class WriteClientHandler extends EventHandler{
 		switch(intent.getType()){
 		case Intent.TYPE_HTTP_EXCEPTION:
 			int statusCode = (Integer)intent.getExtra("exceptioncode");
-			HttpResponse response;
+			String data = (String)intent.getExtra("data");
 			try {
-				response = new HttpResponse(socket);
-				response.sendText(new HttpException(statusCode).getErrorPage());
+				HttpResponse response = new HttpResponse(socket);
+				
+				//some special status to handle
+				if(statusCode == 302){
+					//redirect
+					response.setResponseCode(302);
+					response.setHeader("Location", data);
+					response.sendVoid();
+				}else if(statusCode == 304){
+					//not modified
+					
+				}else{
+					response.sendText(new HttpException(statusCode).getErrorPage());
+				}
+				
 			} catch (IOException e2) {
 				Logger.getLogger().logError("send http exception error : "+e2.toString());
 			}

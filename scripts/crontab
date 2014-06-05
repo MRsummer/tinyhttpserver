@@ -1,0 +1,6 @@
+* * * * * /Users/zhuguangwen/Work/java/tinyhttpserver/scripts/forever.sh
+* * * * * sleep 10 && /Users/zhuguangwen/Work/java/tinyhttpserver/scripts/forever.sh
+* * * * * sleep 20 && /Users/zhuguangwen/Work/java/tinyhttpserver/scripts/forever.sh
+* * * * * sleep 30 && /Users/zhuguangwen/Work/java/tinyhttpserver/scripts/forever.sh
+* * * * * sleep 40 && /Users/zhuguangwen/Work/java/tinyhttpserver/scripts/forever.sh
+* * * * * sleep 50 && /Users/zhuguangwen/Work/java/tinyhttpserver/scripts/forever.sh

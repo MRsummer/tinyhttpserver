@@ -1,11 +1,18 @@
-<server>
-    <name>localhost</name>
-    <port>9999</port>
-    <root>/Users/zhuguangwen/Work/java/tinyhttpserver/www</root>
+<config>
+    <server>
+	    <name>localhost</name>
+	    <port>9999</port>
+	    <root>/Users/zhuguangwen/Work/java/tinyhttpserver/www/localhost</root>
+    </server>
+    
+    <server>
+        <name>test.net</name>
+        <port>9998</port>
+        <root>/Users/zhuguangwen/Work/java/tinyhttpserver/www/test.net</root>
+    </server>
+    
     <accesslog>/Users/zhuguangwen/Work/java/tinyhttpserver/www/log/access.log</accesslog>
     <errorlog>/Users/zhuguangwen/Work/java/tinyhttpserver/www/log/error.log</errorlog>
-    <request>
-        <pattern>*.php</pattern>
-        <fcgi>127.0.0.1:9000</fcgi>
-    </request>
-</server>
+    <workerthread>20</workerthread>
+	    
+</config>

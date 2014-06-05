@@ -21,7 +21,7 @@ package com.httpserver.fcgi;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
+import java.util.HashMap;
 
 /**
  * part of the portlet / servlet request interface used by FastCGIHandler. Allows to use the same code
@@ -59,7 +59,7 @@ public interface RequestAdapter {
 
     public int getContentLength();
 
-    public Enumeration<String> getHeaderNames();
+    public HashMap<String, String> getHeaderNames();
 
     public String getHeader(String key);
 

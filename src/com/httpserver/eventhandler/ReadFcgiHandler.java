@@ -33,7 +33,9 @@ public class ReadFcgiHandler extends EventHandler{
 
 				@Override
 				public void sendRedirect(String targetUrl) {
-					addHttpExceptionEvent(302);
+					
+					System.out.println("302");
+					addHttpExceptionEvent(302, targetUrl);
 				}
 				
 				@Override
@@ -43,7 +45,8 @@ public class ReadFcgiHandler extends EventHandler{
 
 				@Override
 				public void addHeader(String key, String value) {
-					//httpResponse.setHeader(key, value);
+					httpResponse.setHeader(key, value);
+					//System.out.println("fcgi read header : "+key+"->"+value);
 				}
 				
 				@Override
