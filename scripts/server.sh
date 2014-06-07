@@ -5,12 +5,10 @@ if [ $# -ne 1 ];then
 fi
 
 DIR="/Users/zhuguangwen/Work/java/tinyhttpserver"
-WD="/Users/zhuguangwen/Work/java/tinyhttpserver/bin"
-
 
 start() {
-	cd $WD
-	java com/httpserver/core/Black $DIR"/server.conf.xml" 1>&2 2>/dev/null" &
+	cd $DIR"/bin"
+	java com/httpserver/core/Black $DIR"/server.conf.xml" 1>&2 2>/dev/null &
 	cd -
 	echo "finish start !"
 }

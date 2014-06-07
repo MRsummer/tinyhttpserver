@@ -1,0 +1,2 @@
+Sat Jun 07 16:16:37 CST 2014: [send file error : java.net.SocketException: Broken pipe]
+Sat Jun 07 16:34:55 CST 2014: [read fcgi error : java.net.SocketException: Broken pipe]

@@ -1,11 +1,9 @@
 package com.httpserver.http;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -159,6 +157,8 @@ public class HttpResponse {
 	 */
 	public void sendFile(String filePath) throws IOException{
 		System.out.println("send file called");
+		
+		setMimeType(filePath);
 		//send http response status
 		sendStatus();
 		//send the common headers
@@ -169,15 +169,32 @@ public class HttpResponse {
 		finishHeaders();
 		//send file
 		File file = new File(filePath);
-		char[] chars = new char[4096];
+		byte[] bytes = new byte[4096];
 		int readNum = 0;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-		while( (readNum = reader.read(chars)) != -1){
-			writer.write(chars, 0, readNum);
+		FileInputStream reader = new FileInputStream(file);
+		OutputStream output = socket.getOutputStream(); 
+		while( (readNum = reader.read(bytes)) != -1){
+			System.out.println("write file bytes : "+readNum);
+			output.write(bytes, 0, readNum);
 		}
 		reader.close();
+		output.close();
 		//finish response
 		finishResponse();
+	}
+	
+	private void setMimeType(String filePath){
+		//set file headers
+		String mimeType = null;
+		if(filePath.endsWith(".html") || filePath.endsWith(".htm")) mimeType = "text/html";
+		if(filePath.endsWith(".txt")) mimeType = "text/plain";
+		if(filePath.endsWith(".xml") || filePath.endsWith(".xhtml")) mimeType = "application/xhtml+xml";
+		if(filePath.endsWith(".gif") || filePath.endsWith(".GIF")) mimeType = "image/gif";
+		if(filePath.endsWith(".jpg") || filePath.endsWith(".JPG")) mimeType = "image/jpeg";
+		if(filePath.endsWith(".jpeg") || filePath.endsWith(".JPEG")) mimeType = "image/jpeg";
+		if(filePath.endsWith(".png") || filePath.endsWith(".PNG")) mimeType = "image/png";
+		if(filePath.endsWith(".pdf") || filePath.endsWith(".PDF")) mimeType = "application/pdf";
+		if(mimeType != null) setHeader("Content-Type", mimeType);
 	}
 	
 	/**
