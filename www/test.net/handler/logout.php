@@ -8,5 +8,8 @@ unset($_SESSION["login"]);
 unset($_SESSION["uid"]);
 unset($_SESSION["name"]);
 unset($_SESSION["num"]);
+unset($_SESSION["tid"]);
+unset($_SESSION["gid"]);
+unset($_SESSION["privilege"]);
 
 Uri::redirect("/view/login.html.php");

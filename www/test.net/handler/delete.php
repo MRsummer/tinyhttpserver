@@ -4,6 +4,7 @@ require_once("../helper/user.php");
 
 //check privilege
 User::CheckTeacher();
+User::checkTeacherPrivilege("paper");
 
 $id = $_GET["id"];
 $type = $_GET["type"];

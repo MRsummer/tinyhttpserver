@@ -7,6 +7,7 @@ require_once("../conf/appconf.php");
 
 //权限验证
 User::checkTeacher();
+User::checkTeacherPrivilege("exam");
 
 //url验证
 if(! (isset($_GET["exam"]) && is_numeric($_GET["exam"])) ) Uri::goBack("访问出错");

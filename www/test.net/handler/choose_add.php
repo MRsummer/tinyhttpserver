@@ -4,6 +4,7 @@ require_once("../helper/user.php");
 
 //check privilege
 User::CheckTeacher();
+User::checkTeacherPrivilege("paper");
 
 $content = $_POST["content"];
 $cA = trim($_POST["choiceA"]);

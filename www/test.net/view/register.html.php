@@ -1,3 +1,8 @@
+<?php
+require_once("../lib/require.php");
+$teachers = Mysql::getDB()->query("select * from teacher order by id asc");
+?>
+
 <html>
 <?php include("head.html"); ?>
 <body>
@@ -41,7 +46,9 @@
         <label for="teacher" class="col-sm-2 control-label">老师：</label>
         <div class="col-sm-10">
             <select name="teacher" id="teacher">
-                <option value=""></option>
+                <?php foreach($teachers as $teacher){ ?>
+                <option value="<?=$teacher["id"]?>"><?=$teacher["name"]?></option>
+                <?php } ?>
             </select>
         </div>
     </div>

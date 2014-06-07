@@ -4,6 +4,7 @@ require_once("../helper/user.php");
 
 //check privilege
 User::CheckTeacher();
+User::checkTeacherPrivilege("exam");
 
 $type = $_POST["examtype"];
 $beginTime = $_POST["begintime"].":00";

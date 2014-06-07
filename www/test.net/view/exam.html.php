@@ -3,6 +3,8 @@
 require_once("../lib/require.php");
 require_once("../conf/appconf.php");
 require_once("../helper/user.php");
+
+User::checkTeacherPrivilege("exam");
 ?>
 
 <html>
