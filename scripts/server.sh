@@ -8,7 +8,7 @@ DIR="/Users/zhuguangwen/Work/java/tinyhttpserver"
 
 start() {
 	cd $DIR"/bin"
-	java com/httpserver/core/Black $DIR"/server.conf.xml" 1>&2 2>/dev/null &
+	java com/httpserver/core/Black $DIR"/server.conf.xml" > /dev/null &
 	cd -
 	echo "finish start !"
 }
