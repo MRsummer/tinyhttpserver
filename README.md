@@ -30,7 +30,7 @@ and i call it Black
    that you have configured
 5. modify the script script/server.sh , change the DIR 
    variable to your own dir, and the run 
->  ./server.sh start
+   <code>./server.sh start</code>
    to start your server
 
 
