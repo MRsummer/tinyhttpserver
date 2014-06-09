@@ -39,11 +39,11 @@ and i call it Black
   Black is not what you want. but Black is situable for two use :
 
 1. embeded in android apps
-   cause Black is light-weight , and has totally 3000+ lines of 
+>  cause Black is light-weight , and has totally 3000+ lines of 
    code , and can serve relativly fast and stable. so if your 
    android app needs a small server on it, Black will be ok.
 2. study the origin of http server
-   the original purpose of me to write this server is to study 
+>  the original purpose of me to write this server is to study 
    the priciple of web server , so if you have just the same 
    purpose with me , Black wont let you down .
    
