@@ -35,11 +35,11 @@ and i call it Black
 
 
 #Why choose Black : 
-> if you want to build a high performance web site , obviously,
+<br> if you want to build a high performance web site , obviously,
   Black is not what you want. but Black is situable for two use :
 
 1. embeded in android apps
->  cause Black is light-weight , and has totally 3000+ lines of 
+<br>  cause Black is light-weight , and has totally 3000+ lines of 
    code , and can serve relativly fast and stable. so if your 
    android app needs a small server on it, Black will be ok.
 2. study the origin of http server
