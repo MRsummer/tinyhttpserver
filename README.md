@@ -36,13 +36,13 @@ and i call it Black
 
 #Why choose Black : 
 <br> if you want to build a high performance web site , obviously,
-  Black is not what you want. but Black is situable for two use :
+  Black is not what you want. but Black is suitable for two use :
 
 1. embeded in android apps
 <br>  cause Black is light-weight , and has totally 3000+ lines of 
-   code , and can serve relativly fast and stable. so if your 
+   code , and can serve relatively fast and stable. so if your 
    android app needs a small server on it, Black will be ok.
-2. study the origin of http server
+2. study the priciple of http server
 <br>  the original purpose of me to write this server is to study 
    the priciple of web server , so if you have just the same 
    purpose with me , Black wont let you down .
