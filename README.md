@@ -15,7 +15,7 @@ and i call it Black
 8. shell scripts management
 
 #Performance : 
-              static file serving |  script file serving
+              static file serving |  script file serving(using php-fpm)
        nginx         15000        |          9000
        Black         2300         |          1200
 
