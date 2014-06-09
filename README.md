@@ -30,13 +30,13 @@ and i call it Black
    that you have configured
 5. modify the script script/server.sh , change the DIR 
    variable to your own dir, and the run 
-   ./server.sh start
+>  ./server.sh start
    to start your server
 
 
 #Why choose Black : 
->if you want to build a high performance web site , obviously,
-Black is not what you want. but Black is situable for two use :
+> if you want to build a high performance web site , obviously,
+  Black is not what you want. but Black is situable for two use :
 
 1. embeded in android apps
    cause Black is light-weight , and has totally 3000+ lines of 
